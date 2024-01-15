@@ -42,7 +42,14 @@ npm create vite@latest vite-travel-app-zdd
 
 `vite-travel-app-zdd`仅是一个项目名，切换成你自己的项目名即可
 
-## node_modules 安装
+## 安装&调试
+
+```bash
+npm install
+npm run dev
+```
+
+### 问题排查
 
 在命令行中运行`npm install`即可安装，如果你碰到问题，尝试通过下面几种方式解决:
 
@@ -68,12 +75,6 @@ sudo chmod -R 777 /Users/zhangchenhai/dev/
 
 ```bash
 sudo npm cache clean -f
-```
-
-## 项目运行
-
-```bash
-npm run dev
 ```
 
 ## 其他
