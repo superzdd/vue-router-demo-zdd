@@ -93,22 +93,38 @@ const router = createRouter({
 
 #### <h4 id="2.2.2">router 属性 history</h4>
 
-`history`共有两种，分别是`createWebHistory`和`createWebHashHistory`，两者命名上后者多了个`hash`，其他也没什么区别。
-在使用方式上，也没有区别，仅在 URL 表现上有明显的区别：
+`history`共有两种，分别是
 
-- `createWebHistory`和正常的网站没有任何区别
-- `createWebHashHistory`会在 URL 中，**自动加入`#`**，且无法删除，比如：
+- `createWebHistory`，简称 `常规模式`
+- `createWebHashHistory`，简称 `hash模式`
+
+两者命名上`createWebHashHistory`多了个`hash`，仅在 URL 表现上有明显的区别，其他地方没有不同：
+
+`createWebHashHistory`会在 URL 中，**自动加入`#`**，且无法删除，比如：
 
 ```js
 // 基于 https://example.com/folder
-createWebHashHistory(); // 给出一个 `https://example.com/folder#` 的 URL
+// 给出一个 `https://example.com/folder#` 的 URL
+createWebHashHistory();
 ```
 
-由于这个`#`会给网站带来歧义，甚至用户会对其产生不信任感，所以`hash`最好不用。但是`hash`也有一个很大的好处：那就是对网站部署很便利。因为`createWebHistory`需要对后台进行额外配置，这对于很多没有后台经验的小伙伴是很不方便的，而`hash`就没有这个烦恼，可以直接使用。
+##### 两种 History 模式的选择
 
-如果你想快速部署网站，想立马看到效果（也可能后台没完成开发），而且网站类型也不是特别严肃的，用户也不介意，那`hash`是一个很好的长期方案。
+先说结论：
 
-[history 官方文档](https://router.vuejs.org/zh/api/interfaces/RouterOptions.html#Properties-history)
+- 对于独立开发者，推荐`hash模式`。
+- 对于大型项目，推荐`常规模式`。
+- 其他情况下随意切换，无所谓。
+
+选择主要取决于`#`以及部署这两点上：
+
+1. `hash模式`的`#`会给网站带来歧义，甚至用户会对其产生不信任感。但这也取决于网站的类型以及用户是否敏感，所以只有大型项目，门户网站对此类有严格要求。
+
+2. `常规模式`必须对后台进行额外配置，这对于很多没有后台经验的小伙伴是很不方便的，而`hash模式`就没有这个烦恼，可以直接使用，对网站部署很便利。
+
+如果你想快速部署网站，想立马看到效果（也可能后台没完成开发），而且网站类型也不是特别严肃的，用户也不介意，那`hash模式`是一个很好的方案，甚至是长期方案。
+
+[history 官方文档参考](https://router.vuejs.org/zh/api/interfaces/RouterOptions.html#Properties-history)
 
 #### <h4 id="2.2.3">router 属性 routes</h4>
 
@@ -303,7 +319,8 @@ const routes = [
 
 #### <h4 id="2.2.6">router 属性 meta 元信息</h4>
 
-元信息是一种路由专用的信息，可以轻松地附在每一个路由上，比方需要对所有页面进行打分统计：
+`meta`元信息是一种路由专用的信息，可以轻松地附在每一个路由上。
+下方代码展示了一个对所有页面打分的示例：
 
 ```js
 // 页面得分统计
@@ -313,22 +330,18 @@ let totalScore = 0;
 
 // 主要看meta
 const routes = [
-  { path: "/", name: "home", component: Home, meta: { score: 1 } }, // 标准写法
+  { path: "/", name: "home", component: Home, meta: { score: 1 } },
   { path: "/about", name: "about", component: About, meta: { score: 2 } },
   {
     path: "/:pathMatch(.*)*",
     name: "notfound",
-    // vue-router懒加载，表示这个组件仅在对应URL出现后才会请求该组件的资源
     component: () => import("@/views/NotFound.vue"),
     meta: { score: 0 },
   },
   {
     path: "/destination/:country",
     component: () => import("@/views/CountryModel.vue"),
-    // 路由参数的回调，如果你需要对路由中间的参数(比如URL中?后面的部分，或者restful写法)进行修改，那这就是入口
-    // 注意，这里不是用来指定参数，或者传参的地方，仅是对目前已有的参数进行逻辑修改
     meta: { score: 3 },
-    // 导航守卫，这里路由守卫是针对单个URL的
     children: [
       {
         path: ":travelPoint",
@@ -341,9 +354,9 @@ const routes = [
 ];
 
 router.beforeResolve((to, from) => {
+  // 在全局守卫中，将待进入页面的score进行加和
   const { score = 0 } = to.meta;
   totalScore += score;
-  // 这里没有必要的业务要做，只是标明全局守卫的地方
   console.log(`[router beforeResolve] 加${score}分，当前总分: ${totalScore}`);
   return true;
 });
