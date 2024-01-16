@@ -6,16 +6,16 @@
 
 ## Router 能带来什么好处?
 
-`router`带来的好处，是当网站 url 在变化时，页面可以瞬间响应 url 变化。这点相比传统页面进步了很多，使得整个网站的体验能更接近 APP 应用。传统页面则不一样，一旦 url 地址刷新，页面就会变白，然后重新渲染，这是因为 url 变了，所有的资源要重新请求并下载资源。
+`router`带来的好处，是当网站 URL 在变化时，页面可以瞬间响应 URL 变化。这点相比传统页面进步了很多，使得整个网站的体验能更接近 APP 应用。传统页面则不一样，一旦 URL 地址刷新，页面就会变白，然后重新渲染，这是因为 URL 变了，所有的资源要重新请求并下载资源。
 
-其实`Vue`原本不需要使用路由，而且`Vue`本身属于 SPA(Single Page Application)，即所有的内容其实都可以只呈现在一个 url 里面，当前许多手机 H5 也是一样的，把所有功能做在一个页面里就行了。而且手机 H5 属于轻量级功能，整个页面的逻辑串起来很简单，所有内容都放在一个页面里，每次都从头体验效果反而很好。但对于大型网站来讲就不够了，大型网站内容多信息杂，如果不分门别类放好，那同时从一个入口进去会出现很大的问题，比如入口流量拥挤，操作流程拉长，消耗冗余网络资源等等，所以为了契合大型网站的使用方式，路由随即产生。不仅如此，路由加入的无刷新的操作模式将极大得改善整个门户的操作体验，用户不再需要等待页面变白这样的刷新形式，整体体验上也更接近与应用程序，这点对于 HTML 的泛用性是很重要的。
+其实`Vue`原本不需要使用路由，而且`Vue`本身属于 SPA(Single Page Application)，即所有的内容其实都可以只呈现在一个 URL 里面，当前许多手机 H5 也是一样的，把所有功能做在一个页面里就行了。而且手机 H5 属于轻量级功能，整个页面的逻辑串起来很简单，所有内容都放在一个页面里，每次都从头体验效果反而很好。但对于大型网站来讲就不够了，大型网站内容多信息杂，如果不分门别类放好，那同时从一个入口进去会出现很大的问题，比如入口流量拥挤，操作流程拉长，消耗冗余网络资源等等，所以为了契合大型网站的使用方式，路由随即产生。不仅如此，路由加入的无刷新的操作模式将极大得改善整个门户的操作体验，用户不再需要等待页面变白这样的刷新形式，整体体验上也更接近与应用程序，这点对于 HTML 的泛用性是很重要的。
 
 **Q**: `router`乍看起来，和`slot`想要实现的效果差不多，但为什么还要有`router`?
 
 **A**: 因为`router`有一个很重要的功能，是 slot 无法替代的：
 
-- `router`能响应 url 地址的变化，相当于对比`slot`,`router`已经封装了对 url 的处理逻辑。
-- 这个对于 url 地址逻辑的出现，使`router`在概念上，更偏向于一个网站的所有页面，而`slot`只能偏向于某一个页面。
+- `router`能响应 URL 地址的变化，相当于对比`slot`,`router`已经封装了对 URL 的处理逻辑。
+- 这个对于 URL 地址逻辑的出现，使`router`在概念上，更偏向于一个网站的所有页面，而`slot`只能偏向于某一个页面。
 
 ## Vue Router 的实现架构
 
@@ -25,8 +25,8 @@
 2. 使用`router`中必须实现以下内容，否则效果使用不出来：
 
 - `router`对象，全局唯一`router`对象，内含所有路由配置，且被全局`Vue`显示引用。一般引用在`@/main.js`中。
-- `<router-link>`标签，该标签负责跳转 url，点击后 url 就会变化
-- `<router-view>`标签，该标签负责响应 url 的变化，一般一个 url 只有一个`router-view`对应。
+- `<router-link>`标签，该标签负责跳转 URL，点击后 URL 就会变化
+- `<router-view>`标签，该标签负责响应 URL 的变化，一般一个 URL 只有一个`router-view`对应。
 
 3. 项目一旦使用了`router`，那`<router-link>`和`<router-view>`几乎一定会在页面里**同时出现**，例如在本项目`App.vue`中：
 
@@ -135,10 +135,10 @@ const router = createRouter({
 #### history
 
 `history`共有两种，分别是`createWebHistory`和`createWebHashHistory`，两者命名上后者多了个`hash`，其他也没什么区别。
-在使用方式上，也没有区别，仅在 url 表现上有明显的区别：
+在使用方式上，也没有区别，仅在 URL 表现上有明显的区别：
 
 - `createWebHistory`和正常的网站没有任何区别
-- `createWebHashHistory`会在 url 中，**自动加入`#`**，且无法删除，比如：
+- `createWebHashHistory`会在 URL 中，**自动加入`#`**，且无法删除，比如：
 
 ```js
 // 基于 https://example.com/folder
@@ -167,23 +167,23 @@ const routes = [
   { path: "/", name: "home", component: Home }, // 标准写法
   { path: "/about", name: "about", component: About },
   // path可正则，pathMatch是正则语法，.*代表0个以上未知字符
-  // 这个正则语法，可以匹配到所有没有出现在预期url路径中的url
+  // 这个正则语法，可以匹配到所有没有出现在预期URL路径中的URL
   // 比如，/china就会被导到notfound，但是/brazil又能被导到brazil页面
   {
     path: "/:pathMatch(.*)*",
     name: "notfound",
-    // vue-router懒加载，表示这个组件仅在对应url出现后才会请求该组件的资源
+    // vue-router懒加载，表示这个组件仅在对应URL出现后才会请求该组件的资源
     component: () => import("@/views/NotFound.vue"),
   },
   {
     path: "/destination/:country",
     // 注意前两个标准写法有name属性，但这个动态路由就没有name
     component: () => import("@/views/CountryModel.vue"),
-    // 路由参数的回调函数，如果你需要对路由中间的参数(比如url中restful写法)进行修改，那这就是入口
+    // 路由参数的回调函数，如果你需要对路由中间的参数(比如URL中restful写法)进行修改，那这就是入口
     // 注意，这里不是用来指定参数，或者传参的地方，仅是对目前已有的参数进行逻辑修改
-    // 至于url中有?的写法，目前我也不清楚是怎么拿的
+    // 至于URL中有?的写法，目前我也不清楚是怎么拿的
     props: (route) => ({ ...route.params }),
-    // 导航守卫，这里路由守卫是针对单个url的
+    // 导航守卫，这里路由守卫是针对单个URL的
     beforeEnter(to, from) {
       console.log(`[country beforeEnter] country is ${to.params.country}`);
       const exist = sourceData.destinations.find(
@@ -233,10 +233,10 @@ const router = createRouter({
 
 ##### props 例子
 
-比如 url 路径为
+比如 URL 路径为
 
 ```txt
-url路径
+URL路径
 http://localhost:5173/destination/brazil/iguacu-falls
 ```
 
@@ -359,17 +359,17 @@ const routes = [
   {
     path: "/:pathMatch(.*)*",
     name: "notfound",
-    // vue-router懒加载，表示这个组件仅在对应url出现后才会请求该组件的资源
+    // vue-router懒加载，表示这个组件仅在对应URL出现后才会请求该组件的资源
     component: () => import("@/views/NotFound.vue"),
     meta: { score: 0 },
   },
   {
     path: "/destination/:country",
     component: () => import("@/views/CountryModel.vue"),
-    // 路由参数的回调，如果你需要对路由中间的参数(比如url中?后面的部分，或者restful写法)进行修改，那这就是入口
+    // 路由参数的回调，如果你需要对路由中间的参数(比如URL中?后面的部分，或者restful写法)进行修改，那这就是入口
     // 注意，这里不是用来指定参数，或者传参的地方，仅是对目前已有的参数进行逻辑修改
     meta: { score: 3 },
-    // 导航守卫，这里路由守卫是针对单个url的
+    // 导航守卫，这里路由守卫是针对单个URL的
     children: [
       {
         path: ":travelPoint",
@@ -388,4 +388,107 @@ router.beforeResolve((to, from) => {
   console.log(`[router beforeResolve] 加${score}分，当前总分: ${totalScore}`);
   return true;
 });
+```
+
+#### router-view & router-link
+
+关于这两个 html 组件，因为总是配合在一起，所以并在一起说。
+
+最基础的用法：就是一个`router-link`对应一个`router-view`
+
+深入理解的话，以下这个结论是重点：
+
+```
+URL ≠ route.path
+即，
+一个router-link对应一个router-view
+一个URL可对应多个router-link,对应多个router-view
+```
+
+从技术实现上：
+
+- `router-link`-->`route.path`上，而每一个`route.path`，其实是`path + child.path + grandson.path`组合到一起的。
+- `router-view`-->`route.component`上，从`view`->`component`，即`页面`->`组件`，模糊了一整个 URL 必须渲染一整个页面的概念。
+
+最终：
+
+一个 URL 渲染一个视图被 VueRouter 转化为：
+
+```
+一个URL->对应多个Path->渲染多个component
+```
+
+下面是项目中的实际例子及代码片段：
+
+```js
+// @/router/index.js
+
+// 下面这个URL链接，可以激活两个router-view组件
+// http://localhost:xxxx/destination/brazil/iguacu-falls
+const routes = [
+  {
+    // 响应http://localhost:xxxx/destination/brazil/
+    path: "/destination/:country",
+    component: () => import("@/views/CountryModel.vue"),
+    children: [
+      {
+        // 响应完整链接http://localhost:xxxx/destination/brazil/iguacu-falls
+        path: ":travelPoint",
+        name: "experience.show",
+        component: () => import("@/views/TravelPointModel.vue"),
+      },
+    ],
+  },
+];
+```
+
+```html
+<!-- @/App.vue -->
+<!-- App.vue已经是最外层，在这一层里，渲染第一层的router-view -->
+<template>
+  <!-- NavigatorView里是router-link -->
+  <NavigatorView />
+  <div>
+    <!-- 下面这一行，就是router-view的全部了，非常简单 -->
+    <!-- 这一行会映射到CountryModel组件 -->
+    <router-view></router-view>
+  </div>
+</template>
+
+<!-- @/components/NavigatorView.vue -->
+<!-- 这里面是一堆APP.vue里用到的router-link -->
+<template>
+  <div id="nav" class="banner">
+    <router-link class="logo" to="/">Home</router-link>
+    <router-link
+      v-for="item in destinations"
+      :key="item.name"
+      :to="`/destination/${item.slug}`"
+      >{{ item.name }}</router-link
+    >
+    <router-link to="/about">About</router-link>
+  </div>
+</template>
+
+<!-- @/views/CountryModel.vue -->
+<!-- 下方代码主要体现两个作用 -->
+<!-- 1. 渲染APP.vue中所对应的router-link链接 -->
+<!-- 2. 准备下一层的router-link和router-view -->
+<template>
+  <!-- container里面渲染Country的相关内容 -->
+  <div class="container">
+    <!-- 详细页面内容省略。。。 -->
+    <!-- 准备下一层的router-link和router-view -->
+    <router-link
+      v-for="exp in destination.experiences"
+      :key="exp.slug"
+      :to="{
+            name: 'experience.show',
+            params: { country: country.slug, travelPoint: exp.slug },
+          }"
+      ><CountryDetail :exp="exp"></CountryDetail>
+    </router-link>
+    <router-view></router-view>
+  </div>
+</template>
 ```
