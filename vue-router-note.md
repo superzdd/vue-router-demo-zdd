@@ -4,68 +4,27 @@
 
 > 下文简称`router`,`Router`或者路由，`Vue Router`写起来太长，尽量节约时间
 
-## Router 能带来什么好处?
-
-`router`带来的好处，是当网站 URL 在变化时，页面可以瞬间响应 URL 变化。这点相比传统页面进步了很多，使得整个网站的体验能更接近 APP 应用。传统页面则不一样，一旦 URL 地址刷新，页面就会变白，然后重新渲染，这是因为 URL 变了，所有的资源要重新请求并下载资源。
-
-其实`Vue`原本不需要使用路由，而且`Vue`本身属于 SPA(Single Page Application)，即所有的内容其实都可以只呈现在一个 URL 里面，当前许多手机 H5 也是一样的，把所有功能做在一个页面里就行了。而且手机 H5 属于轻量级功能，整个页面的逻辑串起来很简单，所有内容都放在一个页面里，每次都从头体验效果反而很好。但对于大型网站来讲就不够了，大型网站内容多信息杂，如果不分门别类放好，那同时从一个入口进去会出现很大的问题，比如入口流量拥挤，操作流程拉长，消耗冗余网络资源等等，所以为了契合大型网站的使用方式，路由随即产生。不仅如此，路由加入的无刷新的操作模式将极大得改善整个门户的操作体验，用户不再需要等待页面变白这样的刷新形式，整体体验上也更接近与应用程序，这点对于 HTML 的泛用性是很重要的。
-
-**Q**: `router`乍看起来，和`slot`想要实现的效果差不多，但为什么还要有`router`?
-
-**A**: 因为`router`有一个很重要的功能，是 slot 无法替代的：
-
-- `router`能响应 URL 地址的变化，相当于对比`slot`,`router`已经封装了对 URL 的处理逻辑。
-- 这个对于 URL 地址逻辑的出现，使`router`在概念上，更偏向于一个网站的所有页面，而`slot`只能偏向于某一个页面。
-
 ## Vue Router 的实现架构
 
 ### 汇总
 
-1. `router`不包含在`vue`脚手架项目中，要先安装
-2. 使用`router`中必须实现以下内容，否则效果使用不出来：
+要使用`router`，在项目中要实现四个东西，缺一不可：
 
-- `router`对象，全局唯一`router`对象，内含所有路由配置，且被全局`Vue`显示引用。一般引用在`@/main.js`中。
-- `<router-link>`标签，该标签负责跳转 URL，点击后 URL 就会变化
-- `<router-view>`标签，该标签负责响应 URL 的变化，一般一个 URL 只有一个`router-view`对应。
+- [`router`安装](#2.1)
+- [`router`对象](#2.2)
 
-3. 项目一旦使用了`router`，那`<router-link>`和`<router-view>`几乎一定会在页面里**同时出现**，例如在本项目`App.vue`中：
+  - [router 的配置](#2.2.1)
+  - [router 属性 history](#2.2.2)
+  - [router 属性 routes](#2.2.3)
+  - [router 属性 props](#2.2.4)
+  - [router 属性导航守卫](#2.2.5)
+  - [router 属性 meta 元信息](#2.2.6)
 
-```html
-<template>
-  <!-- NavigatorView这个组件里包含<router-link> -->
-  <NavigatorView />
-  <div>
-    <!-- router-view一行满足版 -->
-    <!-- 下面这一行，就是router-view的全部了，非常简单 -->
-    <router-view></router-view>
-  </div>
-</template>
+- [router-link & router-view](#2.3)
 
-<!-- NavigatorView代码 -->
-<template>
-  <div id="nav" class="banner">
-    <router-link class="logo" to="/">Home</router-link>
-    <router-link
-      v-for="item in destinations"
-      :key="item.name"
-      :to="`/destination/${item.slug}`"
-      >{{ item.name }}</router-link
-    >
-    <router-link to="/about">About</router-link>
-  </div>
-</template>
-```
+### <h3 id="2.1">Vue Router 安装</h3>
 
-总结一下，要使用`router`，在项目中要实现四个东西：
-
-- `router`安装
-- `router`对象
-- `router-link`
-- `router-view`
-
-### `Vue Router`安装
-
-新建项目后，安装`router`
+`router`不包含在`vue`脚手架项目中，要先安装
 
 ```bash
 npm i vue-router@4 --save
@@ -81,21 +40,9 @@ npm i vue-router@4 --save
   },
 ```
 
-### `Vue Router`对象
+### <h3 id="2.2">Vue Router 对象</h3>
 
-`router`对象是一个全局对象，声明后要被全局`vue`对象引用：
-
-```js
-// router定义如下：
-// @/router/index.js
-import { createRouter, createWebHistory } from "vue-router"; // createRouter是关键API
-
-const router = createRouter({
-  /* 配置略，后面细讲 */
-});
-
-export default router; // router导出，记得这个名字在main.js中要用
-```
+`router`对象，要全局唯一，内含所有路由配置，且被全局`Vue`显示引用。一般引用会发生在`@/main.js`中。
 
 ```js
 // 全局Vue引用如下：
@@ -104,9 +51,21 @@ import router from "@/router/index.js";
 createApp(App).use(router).mount("#app"); // .use(router)是关键
 ```
 
-### router 的配置
+```js
+// @/router/index.js
+// router定义如下：
+import { createRouter, createWebHistory } from "vue-router"; // createRouter是关键API
 
-这里只谈目前用到过的配置，先放出整个 router 结构，后面会对重点属性进行讲解
+const router = createRouter({
+  /* 配置略，后面细讲 */
+});
+
+export default router; // router导出，这个名字在main.js中要用
+```
+
+#### <h4 id="2.2.1">router 的配置</h4>
+
+先放出项目整个 router 结构，只谈目前用到过的配置，后面会对重点属性进行讲解
 
 ```js
 const router = createRouter({
@@ -132,7 +91,7 @@ const router = createRouter({
 });
 ```
 
-#### history
+#### <h4 id="2.2.2">router 属性 history</h4>
 
 `history`共有两种，分别是`createWebHistory`和`createWebHashHistory`，两者命名上后者多了个`hash`，其他也没什么区别。
 在使用方式上，也没有区别，仅在 URL 表现上有明显的区别：
@@ -151,7 +110,7 @@ createWebHashHistory(); // 给出一个 `https://example.com/folder#` 的 URL
 
 [history 官方文档](https://router.vuejs.org/zh/api/interfaces/RouterOptions.html#Properties-history)
 
-#### routes
+#### <h4 id="2.2.3">router 属性 routes</h4>
 
 `routes`是`router`对象的**核心**，其中所有页面的路由配置，是最复杂，修改最频繁的部分。正因如此，`routes`通常被设计在`index.js`的最上方，单独放一块区域，即方便修改，也避免耦合。
 
@@ -231,7 +190,7 @@ const router = createRouter({
 });
 ```
 
-##### props 例子
+#### <h4 id="2.2.4">router 属性 props</h4>
 
 比如 URL 路径为
 
@@ -261,7 +220,7 @@ http://localhost:5173/destination/brazil/iguacu-falls
 }
 ```
 
-##### 导航守卫
+#### <h4 id="2.2.5">router 属性导航守卫</h4>
 
 导航守卫是 `router` 的一个功能，由于守卫的加入，使得内部信息流转变得十分方便。
 
@@ -342,7 +301,7 @@ const routes = [
 
 [完整的导航解析流程](https://router.vuejs.org/zh/guide/advanced/navigation-guards#%E5%AE%8C%E6%95%B4%E7%9A%84%E5%AF%BC%E8%88%AA%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B)
 
-##### meta 元信息
+#### <h4 id="2.2.6">router 属性 meta 元信息</h4>
 
 元信息是一种路由专用的信息，可以轻松地附在每一个路由上，比方需要对所有页面进行打分统计：
 
@@ -390,9 +349,14 @@ router.beforeResolve((to, from) => {
 });
 ```
 
-#### router-view & router-link
+### <h3 id="2.3"> router-view & router-link</h3>
 
 关于这两个 html 组件，因为总是配合在一起，所以并在一起说。
+
+- `<router-link>`标签，该标签负责跳转 URL，点击后 URL 就会变化
+- `<router-view>`标签，该标签负责响应 URL 的变化，一般一个 URL 只有一个`router-view`对应。
+
+- 项目一旦使用了`router`，那`<router-link>`和`<router-view>`几乎一定会在页面里**同时出现**。
 
 最基础的用法：就是一个`router-link`对应一个`router-view`
 
@@ -492,3 +456,16 @@ const routes = [
   </div>
 </template>
 ```
+
+## Router 能带来什么好处?
+
+`router`带来的好处，是当网站 URL 在变化时，页面可以瞬间响应 URL 变化。这点相比传统页面进步了很多，使得整个网站的体验能更接近 APP 应用。传统页面则不一样，一旦 URL 地址刷新，页面就会变白，然后重新渲染，这是因为 URL 变了，所有的资源要重新请求并下载资源。
+
+其实`Vue`原本不需要使用路由，而且`Vue`本身属于 SPA(Single Page Application)，即所有的内容其实都可以只呈现在一个 URL 里面，当前许多手机 H5 也是一样的，把所有功能做在一个页面里就行了。而且手机 H5 属于轻量级功能，整个页面的逻辑串起来很简单，所有内容都放在一个页面里，每次都从头体验效果反而很好。但对于大型网站来讲就不够了，大型网站内容多信息杂，如果不分门别类放好，那同时从一个入口进去会出现很大的问题，比如入口流量拥挤，操作流程拉长，消耗冗余网络资源等等，所以为了契合大型网站的使用方式，路由随即产生。不仅如此，路由加入的无刷新的操作模式将极大得改善整个门户的操作体验，用户不再需要等待页面变白这样的刷新形式，整体体验上也更接近与应用程序，这点对于 HTML 的泛用性是很重要的。
+
+**Q**: `router`乍看起来，和`slot`想要实现的效果差不多，但为什么还要有`router`?
+
+**A**: 因为`router`有一个很重要的功能，是 slot 无法替代的：
+
+- `router`能响应 URL 地址的变化，相当于对比`slot`,`router`已经封装了对 URL 的处理逻辑。
+- 这个对于 URL 地址逻辑的出现，使`router`在概念上，更偏向于一个网站的所有页面，而`slot`只能偏向于某一个页面。
